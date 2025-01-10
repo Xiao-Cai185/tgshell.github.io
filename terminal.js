@@ -6,6 +6,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const prompt = () => (isConnected ? `admin@tkctf:${currentDir}$` : "Press Enter to reconnect...");
 
+    // 滚动到底部函数
+    const scrollToBottom = () => {
+        outputDiv.scrollTop = outputDiv.scrollHeight;
+    };
+
     // 显示欢迎语
     const showWelcomeMessage = () => {
         outputDiv.innerHTML = `
@@ -14,6 +19,7 @@ TKLinux tkctf-amd64 #2025.1.10 x86_64 GNU/TKLinux
 The programs included with the TKLinux GNU/TKLinux system are free software;
 the exact distribution terms for each program are described in the
 individual files in /usr/share/doc/copyright.\n\n`;
+        scrollToBottom(); // 显示欢迎语后滚动到底部
     };
 
     // 执行命令
@@ -37,6 +43,7 @@ individual files in /usr/share/doc/copyright.\n\n`;
                 if (command === "") {
                     isConnected = true;
                     outputDiv.innerHTML += `${prompt()}\n`;
+                    scrollToBottom();
                 }
                 return;
             }
@@ -55,6 +62,7 @@ individual files in /usr/share/doc/copyright.\n\n`;
                 outputDiv.innerHTML += "Session closed. Goodbye!\n";
                 isConnected = false;
                 outputDiv.innerHTML += "Press Enter to reconnect\n";
+                scrollToBottom();
                 return;
             }
 
@@ -72,7 +80,7 @@ individual files in /usr/share/doc/copyright.\n\n`;
             }
 
             // 滚动到底部
-            outputDiv.scrollTop = outputDiv.scrollHeight;
+            scrollToBottom();
         }
     });
 
