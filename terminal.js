@@ -16,22 +16,9 @@ the exact distribution terms for each program are described in the
 individual files in /usr/share/doc/copyright.\n\n`;
     };
 
-    // 模拟文件系统
-    const simulatedFiles = {
-        "/usr/share/doc/copyright": "This is a joke",
-    };
-
     // 执行命令
     async function executeCommand(command) {
         try {
-            if (command.startsWith("cat ")) {
-                const filePath = command.slice(4).trim();
-                if (simulatedFiles[filePath]) {
-                    return { response: simulatedFiles[filePath], current_dir: currentDir };
-                } else {
-                    return { response: `cat: ${filePath}: No such file or directory`, current_dir: currentDir };
-                }
-            }
             const response = await fetch(`https://shellapi.tkctf.top?command=${encodeURIComponent(command)}`);
             return await response.json();
         } catch (error) {
