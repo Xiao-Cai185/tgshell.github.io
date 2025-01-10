@@ -11,9 +11,9 @@ document.addEventListener("DOMContentLoaded", () => {
         outputDiv.innerHTML = `
 TKLinux tkctf-amd64 #2025.1.10 x86_64 GNU/TKLinux
 
-The programs included with the TKLinux GNU/Linux system are free software;
+The programs included with the TKLinux GNU/TKLinux system are free software;
 the exact distribution terms for each program are described in the
-individual files in /usr/share/doc/copyright.\n\n`;
+individual files in /usr/share/doc/copyright.\n`;
         outputDiv.innerHTML += `${prompt()}\n`;
     };
 
@@ -66,9 +66,8 @@ individual files in /usr/share/doc/copyright.\n\n`;
 
             // 处理 exit 命令
             if (command === "exit") {
-                outputDiv.innerHTML += "Session closed. Goodbye!\n";
+                outputDiv.innerHTML += "Session closed. Goodbye!\nPress Enter to reconnect...";
                 isConnected = false;
-                outputDiv.innerHTML += "Press Enter to reconnect\n";
                 return;
             }
 
