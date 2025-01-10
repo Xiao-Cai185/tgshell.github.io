@@ -25,6 +25,19 @@ document.addEventListener("DOMContentLoaded", () => {
             // 显示命令
             outputDiv.innerHTML += `${prompt()} ${command}\n`;
 
+            // 处理 `clear` 和 `exit` 命令
+            if (command === "clear") {
+                outputDiv.innerHTML = ""; // 清空终端内容
+                return;
+            } else if (command === "exit") {
+                outputDiv.innerHTML += "Session closed. Goodbye!\n";
+                setTimeout(() => {
+                    window.close(); // 尝试关闭浏览器窗口
+                }, 1000);
+                return;
+            }
+
+            // 对其他命令与后端交互
             if (command) {
                 const { response, current_dir } = await executeCommand(command);
 
