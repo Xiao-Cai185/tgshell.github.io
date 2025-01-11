@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const prompt = () => (isConnected ? `admin@tkctf:${currentDir}$` : "Press Enter to reconnect...");
 
-    // 优化的平滑滚动函数
     const scrollToBottom = () => {
         setTimeout(() => {
             const scrollOptions = {
@@ -52,8 +51,11 @@ individual files in /usr/share/doc/copyright.\n\n`;
                 return;
             }
 
+            // Always add prompt and newline for any Enter press
             outputDiv.innerHTML += `${prompt()} ${command}\n`;
+            scrollToBottom();
 
+            // Handle actual commands only if there is input
             if (command === "clear") {
                 outputDiv.innerHTML = "";
                 scrollToBottom();
