@@ -16,12 +16,17 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 75%; /* 将整体字体缩小到原来的 75% */
+    font-size: 80%; /* 将整体字体缩小到原来的 80% */
+}
+
+/* 全局选中文本样式 */
+::selection {
+    background-color: rgba(0, 255, 0, 0.45); /* 45% 透明度的绿色光条 */
 }
 
 #terminal {
-    width: 80%;
-    height: 80%;
+    width: 95%;
+    height: 90%;
     background-color: #111;
     border: 1px solid #444;
     padding: 10px;
@@ -52,9 +57,4 @@ body {
     font-family: 'CascadiaCodeNF-Bold', monospace; /* 明确设置输入框字体 */
     font-size: 1em; /* 保持与整体一致的字体缩放 */
     caret-color: #0f0; /* 设置光标颜色为绿色 */
-}
-
-/* 选中文本样式 */
-#user-input::selection {
-    background-color: rgba(0, 255, 0, 0.35); /* 35% 透明度的绿色光条 */
 }
