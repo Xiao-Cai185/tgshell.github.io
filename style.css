@@ -1,13 +1,22 @@
+/* 引入 CascadiaCodeNF-Bold 字体 */
+@font-face {
+    font-family: 'CascadiaCodeNF-Bold';
+    src: url('./CascadiaCodeNF-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
 body {
     background-color: #000;
     color: #0f0;
-    font-family: monospace;
+    font-family: 'CascadiaCodeNF-Bold', monospace; /* 使用指定字体 */
     margin: 0;
     padding: 0;
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 75%; /* 将整体字体缩小到原来的 75% */
 }
 
 #terminal {
@@ -40,4 +49,12 @@ body {
     color: #0f0;
     outline: none;
     flex: 1;
+    font-family: 'CascadiaCodeNF-Bold', monospace; /* 明确设置输入框字体 */
+    font-size: 1em; /* 保持与整体一致的字体缩放 */
+    caret-color: #0f0; /* 设置光标颜色为绿色 */
+}
+
+/* 选中文本样式 */
+#user-input::selection {
+    background-color: rgba(0, 255, 0, 0.35); /* 35% 透明度的绿色光条 */
 }

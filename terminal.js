@@ -52,6 +52,17 @@ individual files in /usr/share/doc/copyright.\n\n`;
         historyIndex = history.length;
     };
 
+    const executeHistoryCommand = () => {
+        if (history.length === 0) {
+            outputDiv.innerHTML += "No commands in history.\n";
+        } else {
+            history.forEach((cmd, index) => {
+                outputDiv.innerHTML += `${index + 1}: ${cmd}\n`;
+            });
+        }
+        scrollToBottom();
+    };
+
     async function executeCommand(command) {
         try {
             const response = await fetch(`https://shellapi.tkctf.top?command=${encodeURIComponent(command)}`);
@@ -91,6 +102,12 @@ individual files in /usr/share/doc/copyright.\n\n`;
                 outputDiv.innerHTML += "Press Enter to reconnect\n";
                 scrollToBottom();
                 inputField.focus();
+                return;
+            }
+
+            if (command === "history") {
+                updateHistory(command); // Add the "history" command itself to the history
+                executeHistoryCommand();
                 return;
             }
 
