@@ -17,6 +17,7 @@ body {
     border: 1px solid #444;
     padding: 10px;
     overflow-y: auto;
+    scroll-behavior: smooth; /* 添加平滑滚动效果 */
 }
 
 #output {

@@ -1,28 +1,33 @@
 document.addEventListener("DOMContentLoaded", () => {
     const inputField = document.getElementById("user-input");
     const outputDiv = document.getElementById("output");
-    let currentDir = "/tmp/tg"; // 默认目录
-    let isConnected = true; // 是否连接状态
+    const terminalDiv = document.getElementById("terminal");
+    let currentDir = "/tmp/tg";
+    let isConnected = true;
 
     const prompt = () => (isConnected ? `admin@tkctf:${currentDir}$` : "Press Enter to reconnect...");
 
-    // 滚动到底部函数
+    // 优化的平滑滚动函数
     const scrollToBottom = () => {
-        outputDiv.scrollTop = outputDiv.scrollHeight;
+        setTimeout(() => {
+            const scrollOptions = {
+                top: terminalDiv.scrollHeight,
+                behavior: 'smooth'
+            };
+            terminalDiv.scrollTo(scrollOptions);
+        }, 0);
     };
 
-    // 显示欢迎语
     const showWelcomeMessage = () => {
         outputDiv.innerHTML = `
-TKLinux tkctf-amd64 #2025.1.10 x86_64 GNU/TKLinux
+TKLinux tkctf-amd64 #2025.1.11 x86_64 GNU/TKLinux
 
 The programs included with the TKLinux GNU/TKLinux system are free software;
 the exact distribution terms for each program are described in the
 individual files in /usr/share/doc/copyright.\n\n`;
-        scrollToBottom(); // 显示欢迎语后滚动到底部
+        scrollToBottom();
     };
 
-    // 执行命令
     async function executeCommand(command) {
         try {
             const response = await fetch(`https://shellapi.tkctf.top?command=${encodeURIComponent(command)}`);
@@ -32,58 +37,68 @@ individual files in /usr/share/doc/copyright.\n\n`;
         }
     }
 
-    // 监听键盘输入
     inputField.addEventListener("keydown", async (event) => {
         if (event.key === "Enter") {
             const command = inputField.value.trim();
             inputField.value = "";
 
-            // 如果是中断状态
             if (!isConnected) {
                 if (command === "") {
                     isConnected = true;
                     outputDiv.innerHTML += `${prompt()}\n`;
                     scrollToBottom();
+                    inputField.focus();
                 }
                 return;
             }
 
-            // 显示命令
             outputDiv.innerHTML += `${prompt()} ${command}\n`;
 
-            // 处理 clear 命令
             if (command === "clear") {
                 outputDiv.innerHTML = "";
+                scrollToBottom();
                 return;
             }
 
-            // 处理 exit 命令
             if (command === "exit") {
                 outputDiv.innerHTML += "Session closed. Goodbye!\n";
                 isConnected = false;
                 outputDiv.innerHTML += "Press Enter to reconnect\n";
                 scrollToBottom();
+                inputField.focus();
                 return;
             }
 
-            // 处理其他命令
             if (command) {
-                const { response, current_dir } = await executeCommand(command);
+                const observer = new MutationObserver(() => {
+                    scrollToBottom();
+                });
+                
+                observer.observe(outputDiv, {
+                    childList: true,
+                    characterData: true,
+                    subtree: true
+                });
 
-                // 显示返回结果
+                const { response, current_dir } = await executeCommand(command);
                 outputDiv.innerHTML += `${response}\n`;
 
-                // 更新目录（如果返回有效）
                 if (current_dir) {
                     currentDir = current_dir;
                 }
+
+                observer.disconnect();
+                scrollToBottom();
             }
 
-            // 滚动到底部
-            scrollToBottom();
+            inputField.focus();
         }
     });
 
-    // 初始化显示欢迎语
     showWelcomeMessage();
+
+    const resizeObserver = new ResizeObserver(() => {
+        scrollToBottom();
+    });
+    resizeObserver.observe(terminalDiv);
 });
