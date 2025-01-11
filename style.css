@@ -1,7 +1,7 @@
-/* 引入 CascadiaCodeNF-Bold 字体 */
+/* 引入 CascadiaMonoPL-SemiBold 字体 */
 @font-face {
-    font-family: 'CascadiaCodeNF-Bold';
-    src: url('./CascadiaCodeNF-Bold.ttf') format('truetype');
+    font-family: 'CascadiaMonoPL-SemiBold';
+    src: url('./CascadiaMonoPL-SemiBold.ttf') format('truetype');
     font-weight: bold;
     font-style: normal;
 }
@@ -9,7 +9,7 @@
 body {
     background-color: #000;
     color: #0f0;
-    font-family: 'CascadiaCodeNF-Bold', monospace; /* 使用指定字体 */
+    font-family: 'CascadiaMonoPL-SemiBold', monospace; /* 使用指定字体 */
     margin: 0;
     padding: 0;
     height: 100vh;
@@ -54,7 +54,7 @@ body {
     color: #0f0;
     outline: none;
     flex: 1;
-    font-family: 'CascadiaCodeNF-Bold', monospace; /* 明确设置输入框字体 */
+    font-family: 'CascadiaMonoPL-SemiBold', monospace; /* 明确设置输入框字体 */
     font-size: 1em; /* 保持与整体一致的字体缩放 */
     caret-color: #0f0; /* 设置光标颜色为绿色 */
 }

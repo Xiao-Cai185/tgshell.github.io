@@ -65,7 +65,7 @@ individual files in /usr/share/doc/copyright.\n\n`;
 
     async function executeCommand(command) {
         try {
-            const response = await fetch(`https://shellapi.tkctf.top?command=${encodeURIComponent(command)}`);
+            const response = await fetch(`https://linuxapi.tkctf.top?command=${encodeURIComponent(command)}`);
             return await response.json();
         } catch (error) {
             return { response: `Error: Unable to process command. ${error.message}`, current_dir: currentDir };
