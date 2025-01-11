@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const terminalDiv = document.getElementById("terminal");
     let currentDir = "/tmp/tg";
     let isConnected = true;
+    let currentPing = null; // 用于跟踪当前 ping 命令状态
 
     const prompt = () => (isConnected ? `admin@tkctf:${currentDir}$` : "Press Enter to reconnect...");
 
@@ -36,6 +37,44 @@ individual files in /usr/share/doc/copyright.\n\n`;
         }
     }
 
+    const startPing = (ip) => {
+        outputDiv.innerHTML += `PING ${ip} (${ip}) 56(84) bytes of data.\n`;
+        scrollToBottom();
+
+        currentPing = new EventSource(`https://shellapi.tkctf.top/ping?ip=${encodeURIComponent(ip)}`);
+
+        currentPing.onmessage = (event) => {
+            if (event.data === "END") {
+                currentPing.close();
+                currentPing = null;
+                outputDiv.innerHTML += `--- ${ip} ping statistics ---\n4 packets transmitted, 4 received, 0% packet loss\nrtt min/avg/max/mdev = 0.924/1.032/1.115/0.077 ms\n`;
+                outputDiv.innerHTML += `${prompt()}`;
+                scrollToBottom();
+            } else {
+                outputDiv.innerHTML += `${event.data}\n`;
+                scrollToBottom();
+            }
+        };
+
+        currentPing.onerror = () => {
+            currentPing.close();
+            currentPing = null;
+            outputDiv.innerHTML += "Error: Ping interrupted.\n";
+            outputDiv.innerHTML += `${prompt()}`;
+            scrollToBottom();
+        };
+    };
+
+    const stopPing = async () => {
+        if (currentPing) {
+            currentPing.close();
+            currentPing = null;
+            await fetch("https://shellapi.tkctf.top/ping/stop");
+            outputDiv.innerHTML += `^C\n`;
+            scrollToBottom();
+        }
+    };
+
     inputField.addEventListener("keydown", async (event) => {
         if (event.key === "Enter") {
             const command = inputField.value.trim();
@@ -55,6 +94,13 @@ individual files in /usr/share/doc/copyright.\n\n`;
             outputDiv.innerHTML += `${prompt()} ${command}\n`;
             scrollToBottom();
 
+            if (currentPing && command === "^C") {
+                await stopPing();
+                outputDiv.innerHTML += `${prompt()}`;
+                scrollToBottom();
+                return;
+            }
+
             // Handle actual commands only if there is input
             if (command === "clear") {
                 outputDiv.innerHTML = "";
@@ -71,11 +117,17 @@ individual files in /usr/share/doc/copyright.\n\n`;
                 return;
             }
 
+            const [cmd, ...args] = command.split(" ");
+            if (cmd === "ping" && args.length === 1) {
+                startPing(args[0]);
+                return;
+            }
+
             if (command) {
                 const observer = new MutationObserver(() => {
                     scrollToBottom();
                 });
-                
+
                 observer.observe(outputDiv, {
                     childList: true,
                     characterData: true,
