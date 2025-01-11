@@ -4,16 +4,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const terminalDiv = document.getElementById("terminal");
     let currentDir = "/tmp/tg";
     let isConnected = true;
+    let history = [];
+    let historyIndex = -1;
 
     const prompt = () => (isConnected ? `admin@tkctf:${currentDir}$` : "Press Enter to reconnect...");
 
     const scrollToBottom = () => {
         setTimeout(() => {
-            const scrollOptions = {
+            terminalDiv.scrollTo({
                 top: terminalDiv.scrollHeight,
                 behavior: 'smooth'
-            };
-            terminalDiv.scrollTo(scrollOptions);
+            });
         }, 0);
     };
 
@@ -25,6 +26,30 @@ The programs included with the TKLinux GNU/TKLinux system are free software;
 the exact distribution terms for each program are described in the
 individual files in /usr/share/doc/copyright.\n\n`;
         scrollToBottom();
+    };
+
+    const loadHistoryFromCookie = () => {
+        const cookieHistory = document.cookie.split("; ").find(row => row.startsWith("commandHistory="));
+        if (cookieHistory) {
+            try {
+                history = JSON.parse(decodeURIComponent(cookieHistory.split("=")[1])) || [];
+            } catch (e) {
+                console.error("Failed to load command history:", e);
+                history = [];
+            }
+        }
+    };
+
+    const saveHistoryToCookie = () => {
+        document.cookie = `commandHistory=${encodeURIComponent(JSON.stringify(history))}; path=/; max-age=31536000`;
+    };
+
+    const updateHistory = (command) => {
+        if (command && (history.length === 0 || history[history.length - 1] !== command)) {
+            history.push(command);
+            saveHistoryToCookie();
+        }
+        historyIndex = history.length;
     };
 
     async function executeCommand(command) {
@@ -51,11 +76,9 @@ individual files in /usr/share/doc/copyright.\n\n`;
                 return;
             }
 
-            // Always add prompt and newline for any Enter press
             outputDiv.innerHTML += `${prompt()} ${command}\n`;
             scrollToBottom();
 
-            // Handle actual commands only if there is input
             if (command === "clear") {
                 outputDiv.innerHTML = "";
                 scrollToBottom();
@@ -72,10 +95,12 @@ individual files in /usr/share/doc/copyright.\n\n`;
             }
 
             if (command) {
+                updateHistory(command);
+
                 const observer = new MutationObserver(() => {
                     scrollToBottom();
                 });
-                
+
                 observer.observe(outputDiv, {
                     childList: true,
                     characterData: true,
@@ -95,9 +120,27 @@ individual files in /usr/share/doc/copyright.\n\n`;
 
             inputField.focus();
         }
+
+        if (event.key === "ArrowUp") {
+            if (historyIndex > 0) {
+                historyIndex--;
+                inputField.value = history[historyIndex];
+            }
+        }
+
+        if (event.key === "ArrowDown") {
+            if (historyIndex < history.length - 1) {
+                historyIndex++;
+                inputField.value = history[historyIndex];
+            } else {
+                historyIndex = history.length;
+                inputField.value = "";
+            }
+        }
     });
 
     showWelcomeMessage();
+    loadHistoryFromCookie();
 
     const resizeObserver = new ResizeObserver(() => {
         scrollToBottom();
