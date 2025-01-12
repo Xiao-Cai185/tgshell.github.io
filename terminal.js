@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const inputField = document.getElementById("user-input");
     const outputDiv = document.getElementById("output");
     const terminalDiv = document.getElementById("terminal");
-    let currentDir = "/tmp/tg";
+    let currentDir = "/tmp/ctf";
     let isConnected = true;
     let history = [];
     let historyIndex = -1;
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const showWelcomeMessage = () => {
         outputDiv.innerHTML = `
-TKLinux tkctf-amd64 #2025.1.11 x86_64 GNU/TKLinux
+TKLinux tkctf-amd64 #2025.1.12 x86_64 GNU/TKLinux
 
 The programs included with the TKLinux GNU/TKLinux system are free software;
 the exact distribution terms for each program are described in the
